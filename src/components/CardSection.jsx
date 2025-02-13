@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import Card from "./Card";
 
 export class CardSection extends Component {
@@ -74,6 +74,32 @@ export class CardSection extends Component {
             }}
           >
             ${this.props.currentPrice}
+          </div>
+        </div>
+        <div>
+          <div
+            className="text-white text-center"
+            style={{
+              fontFamily: "NHaasGroteskDSPro-65Md",
+              overflow: "visible",
+              height: "2px",
+              marginTop: "1%",
+            }}
+          >
+            {" "}
+            Current Price
+          </div>
+          <div
+            style={{
+              fontFamily: "NHaasGroteskDSPro-65Md",
+              fontSize: "90px",
+              fontWeight: "700",
+              color: "#fcdf03",
+              textDecoration: "none solid rgb(255, 255, 255)",
+              textAlign: "center",
+            }}
+          >
+            ₹{this.props.currentPriceInr}
           </div>
         </div>
       </div>

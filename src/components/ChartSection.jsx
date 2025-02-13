@@ -1,5 +1,7 @@
-import React, { Component } from "react";
-import Chart from "react-apexcharts";
+import { Component } from "react";
+import Charts from "./Charts";
+import ChartButtons from "./ChartButtons";
+import ChartDetails from "./ChartDetails";
 
 export class ChartSection extends Component {
   constructor(props) {
@@ -8,41 +10,6 @@ export class ChartSection extends Component {
     this.state = {
       Price: {
         options: {
-          chart: {
-            id: "area-datetime",
-          },
-          grid: {
-            show: false,
-          },
-          title: {
-            text: "Market Price (USD)",
-            style: {
-              fontSize: "14px",
-              fontWeight: "bold",
-              color: "#fcdf03",
-            },
-          },
-          stroke: {
-            curve: "smooth",
-          },
-          xaxis: {
-            type: "datetime",
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          yaxis: {
-            show: false,
-          },
-          colors: ["#fcdf03"],
-          tooltip: {
-            y: {
-              formatter: (value) => {
-                return value.toFixed(2);
-              },
-            },
-            theme: "dark",
-          },
           selection: 365,
         },
         series: [
@@ -53,40 +20,6 @@ export class ChartSection extends Component {
         ],
       },
       Market_Cap: {
-        options: {
-          grid: {
-            show: false,
-          },
-          title: {
-            text: "Market Cap (USD)",
-            style: {
-              fontSize: "14px",
-              fontWeight: "bold",
-              color: "#ff69f5",
-            },
-          },
-          stroke: {
-            curve: "smooth",
-          },
-          xaxis: {
-            type: "datetime",
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          yaxis: {
-            show: false,
-          },
-          colors: ["#ff69f5"],
-          tooltip: {
-            y: {
-              formatter: (value) => {
-                return value.toFixed(2);
-              },
-            },
-            theme: "dark",
-          },
-        },
         series: [
           {
             name: "Market Cap (USD)",
@@ -95,40 +28,6 @@ export class ChartSection extends Component {
         ],
       },
       Tot_Vol: {
-        options: {
-          grid: {
-            show: false,
-          },
-          title: {
-            text: "Market Volume",
-            style: {
-              fontSize: "14px",
-              fontWeight: "bold",
-              color: "#00ffea",
-            },
-          },
-          stroke: {
-            curve: "smooth",
-          },
-          xaxis: {
-            type: "datetime",
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          yaxis: {
-            show: false,
-          },
-          colors: ["#00ffea"],
-          tooltip: {
-            y: {
-              formatter: (value) => {
-                return value.toFixed(2);
-              },
-            },
-            theme: "dark",
-          },
-        },
         series: [
           {
             name: "Market Volume",
@@ -157,25 +56,29 @@ export class ChartSection extends Component {
     });
     this.setState({
       Market_Cap: {
-        options: this.state.Market_Cap.options,
-        series: [{ name: "Market Price", data: jsonChartData.market_caps }],
+        series: [{ name: "Market Cap", data: jsonChartData.market_caps }],
       },
     });
     this.setState({
       Tot_Vol: {
-        options: this.state.Tot_Vol.options,
-        series: [{ name: "Market Price", data: jsonChartData.total_volumes }],
+        series: [{ name: "Market Volume", data: jsonChartData.total_volumes }],
+      },
+    });
+  };
+
+  handleSubmit = (event) => {
+    this.setState({
+      Price: {
+        options: { selection: event.target.value },
+        series: this.state.Price.series,
       },
     });
   };
 
   componentDidMount() {
     this.fetchData();
-    this.interval = setInterval(() => this.fetchData(), 2000);
   }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+
   componentDidUpdate() {
     if (this.prevId !== this.props.Id) {
       this.prevId = this.props.Id;
@@ -195,79 +98,11 @@ export class ChartSection extends Component {
             <div className="col" style={{ maxWidth: "610px" }}>
               <div id="chart">
                 <div className="toolbar">
-                  <button
-                    id="one_month"
-                    onClick={() =>
-                      this.setState({
-                        Price: {
-                          options: { ...this.tooltip, selection: 1 },
-                          series: this.state.Price.series,
-                        },
-                      })
-                    }
-                  >
-                    1D
-                  </button>
-                  &nbsp;
-                  <button
-                    id="six_months"
-                    onClick={() =>
-                      this.setState({
-                        Price: {
-                          options: { ...this.tooltip, selection: 7 },
-                          series: this.state.Price.series,
-                        },
-                      })
-                    }
-                  >
-                    1W
-                  </button>
-                  &nbsp;
-                  <button
-                    id="one_year"
-                    onClick={() =>
-                      this.setState({
-                        Price: {
-                          options: { ...this.tooltip, selection: 30 },
-                          series: this.state.Price.series,
-                        },
-                      })
-                    }
-                  >
-                    1M
-                  </button>
-                  &nbsp;
-                  <button
-                    id="ytd"
-                    onClick={() =>
-                      this.setState({
-                        Price: {
-                          options: { ...this.tooltip, selection: 182 },
-                          series: this.state.Price.series,
-                        },
-                      })
-                    }
-                  >
-                    6M
-                  </button>
-                  &nbsp;
-                  <button
-                    id="all"
-                    onClick={() =>
-                      this.setState({
-                        Price: {
-                          options: { ...this.tooltip, selection: 365 },
-                          series: this.state.Price.series,
-                        },
-                      })
-                    }
-                  >
-                    1Y
-                  </button>
+                  <ChartButtons handleSubmit={this.handleSubmit} />
                 </div>
-                <Chart
-                  options={this.state.Price.options}
+                <Charts
                   series={this.state.Price.series}
+                  color={"#fcdf03"}
                   type="area"
                   height="400"
                   width="600"
@@ -275,116 +110,36 @@ export class ChartSection extends Component {
               </div>
             </div>
             <div className="col" style={{ maxWidth: "200px" }}>
-              <div className="card-body ">
-                <h6
-                  className="card-title"
-                  style={{ fontFamily: "NHaasGroteskDSPro-65Md" }}
-                >
-                  {" "}
-                  Market Cap{" "}
-                </h6>
-                <p
-                  className="card-text fw-bold "
-                  style={{
-                    fontFamily: "NHaasGroteskDSPro-65Md",
-                    color: "rgb(255, 255, 255)",
-                    fontSize: "small",
-                  }}
-                >
-                  $ {this.props.MarketCap}
-                </p>
-              </div>
-
-              <div className="card-body ">
-                <h6
-                  className="card-title"
-                  style={{ fontFamily: "NHaasGroteskDSPro-65Md" }}
-                >
-                  {" "}
-                  Price Change 24hrs{" "}
-                </h6>
-                <p
-                  className="card-text fw-bold "
-                  style={{
-                    fontFamily: "NHaasGroteskDSPro-65Md",
-                    color: "rgb(255, 255, 255)",
-                    fontSize: "small",
-                  }}
-                >
-                  $ {this.props.priceChange24}
-                </p>
-              </div>
-              <div className="card-body ">
-                <h6
-                  className="card-title"
-                  style={{ fontFamily: "NHaasGroteskDSPro-65Md" }}
-                >
-                  {" "}
-                  Total Volume{" "}
-                </h6>
-                <p
-                  className="card-text fw-bold "
-                  style={{
-                    fontFamily: "NHaasGroteskDSPro-65Md",
-                    color: "rgb(255, 255, 255)",
-                    fontSize: "small",
-                  }}
-                >
-                  $ {this.props.TotVol}
-                </p>
-              </div>
-              <div className="card-body ">
-                <h6
-                  className="card-title"
-                  style={{ fontFamily: "NHaasGroteskDSPro-65Md" }}
-                >
-                  {" "}
-                  Circulating Supply
-                </h6>
-                <p
-                  className="card-text fw-bold "
-                  style={{
-                    fontFamily: "NHaasGroteskDSPro-65Md",
-                    color: "rgb(255, 255, 255)",
-                    fontSize: "small",
-                  }}
-                >
-                  {this.props.Circulating}
-                </p>
-              </div>
-              <div className="card-body ">
-                <h6
-                  className="card-title"
-                  style={{ fontFamily: "NHaasGroteskDSPro-65Md" }}
-                >
-                  {" "}
-                  Twitter Followers
-                </h6>
-                <p
-                  className="card-text fw-bold "
-                  style={{
-                    fontFamily: "NHaasGroteskDSPro-65Md",
-                    color: "rgb(255, 255, 255)",
-                    fontSize: "small",
-                  }}
-                >
-                  {this.props.twitterF}
-                </p>
-              </div>
+              <ChartDetails name={"Market Cap"} val={this.props.MarketCap} />
+              <ChartDetails
+                name={"Price Change 24hrs"}
+                val={this.props.priceChange24}
+              />
+              <ChartDetails name={"Total Volume"} val={this.props.TotVol} />
+              <ChartDetails
+                name={"Circulating Supply"}
+                val={this.props.Circulating}
+              />
+              <ChartDetails
+                name={"Twitter Followers"}
+                val={this.props.twitterF}
+              />
             </div>
             <div className="col" style={{ maxWidth: "310px" }}>
               <div>
-                <Chart
-                  options={this.state.Market_Cap.options}
+                {/* market cap chart */}
+                <Charts
                   series={this.state.Market_Cap.series}
+                  color={"#ff69f5"}
                   type="line"
                   height="200"
                   width="300"
                 />
               </div>
               <div>
-                <Chart
-                  options={this.state.Tot_Vol.options}
+                {/* volume chart */}
+                <Charts
+                  color={"#00ffea"}
                   series={this.state.Tot_Vol.series}
                   type="line"
                   height="200"

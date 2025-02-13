@@ -40,6 +40,11 @@ export default class App extends Component {
               ? this.state.Data.market_data.current_price["usd"]
               : ""
           }
+          currentPriceInr={
+            this.state.Data.market_data
+              ? this.state.Data.market_data.current_price["inr"]
+              : ""
+          }
           mCap24={
             this.state.Data.market_data
               ? this.state.Data.market_data.market_cap_change_percentage_24h
